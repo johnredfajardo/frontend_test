@@ -1,26 +1,64 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Avatar from "boring-avatars";
+import { useState, useEffect } from 'react';
+import Avatar from 'boring-avatars';
 import {
   FaRegCircleXmark,
   FaLocationDot,
   FaPhone,
   FaEnvelope,
-} from "react-icons/fa6";
+} from 'react-icons/fa6';
 
-import Controls from "./controls";
-import Modal from "./modal";
+import Controls from './controls';
+import Modal from './modal';
 
-import { User } from "./types/user";
+import { Company, User } from './types/user';
 
 export type GalleryProps = {
   users: User[];
 };
+
 const Gallery = ({ users }: GalleryProps) => {
   const [usersList, setUsersList] = useState(users);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [sortKey, setSortKey] = useState<string>('name');
+  const [sortDirection, setSortDirection] = useState<string>('');
+
+  useEffect(() => {
+    if (!sortKey || !sortDirection) return;
+
+    // Create a copy of userSList
+    let newUserList = [...usersList];
+
+    // Sorting starts here
+    newUserList.sort((a, b) => {
+      // Get value from the obj by sortKey
+      let valueA = a[sortKey as keyof User];
+      let valueB = b[sortKey as keyof User];
+
+      // If sortKey is 'company', extract company.name value
+      if (sortKey === 'company') {
+        valueA = (a[sortKey as keyof User] as Company).name;
+        valueB = (b[sortKey as keyof User] as Company).name;
+      }
+
+      if (valueA > valueB) {
+        return 1;
+      } else if (valueA < valueB) {
+        return -1;
+      }
+
+      return 0;
+    });
+
+    // If sortDirection is 'descending', reverse the array elements
+    if (sortDirection === 'descending') {
+      newUserList.reverse();
+    }
+
+    setUsersList(newUserList);
+  }, [sortKey, sortDirection]);
 
   const handleModalOpen = (id: number) => {
     const user = usersList.find((item) => item.id === id) || null;
@@ -40,7 +78,7 @@ const Gallery = ({ users }: GalleryProps) => {
     <div className="user-gallery">
       <div className="heading">
         <h1 className="title">Users</h1>
-        <Controls />
+        <Controls setSortKey={setSortKey} setSortDirection={setSortDirection} />
       </div>
       <div className="items">
         {usersList.map((user, index) => (
@@ -54,7 +92,7 @@ const Gallery = ({ users }: GalleryProps) => {
                 size={96}
                 name={user.name}
                 variant="marble"
-                colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
+                colors={['#92A1C6', '#146A7C', '#F0AB3D', '#C271B4', '#C20D90']}
               />
             </div>
             <div className="info">
@@ -84,11 +122,11 @@ const Gallery = ({ users }: GalleryProps) => {
                       name={selectedUser.name}
                       variant="marble"
                       colors={[
-                        "#92A1C6",
-                        "#146A7C",
-                        "#F0AB3D",
-                        "#C271B4",
-                        "#C20D90",
+                        '#92A1C6',
+                        '#146A7C',
+                        '#F0AB3D',
+                        '#C271B4',
+                        '#C20D90',
                       ]}
                     />
                   </div>

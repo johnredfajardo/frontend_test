@@ -1,14 +1,20 @@
-import Select from "react-select";
+import { Dispatch, SetStateAction, FC } from 'react';
+import Select from 'react-select';
 
-const Controls = () => {
+interface ControlsProps {
+  setSortKey: Dispatch<SetStateAction<string>>;
+  setSortDirection: Dispatch<SetStateAction<string>>;
+}
+
+const Controls: FC<ControlsProps> = ({ setSortKey, setSortDirection }) => {
   const fieldOptions = [
-    { label: "Name", value: "name" },
-    { label: "Company", value: "company" },
-    { label: "Email", value: "email" },
+    { label: 'Name', value: 'name' },
+    { label: 'Company', value: 'company' },
+    { label: 'Email', value: 'email' },
   ];
   const directionOptions = [
-    { label: "Ascending", value: "ascending" },
-    { label: "Descending", value: "descending" },
+    { label: 'Ascending', value: 'ascending' },
+    { label: 'Descending', value: 'descending' },
   ];
 
   return (
@@ -17,7 +23,12 @@ const Controls = () => {
         <label htmlFor="sort-field" className="label">
           Sort Field
         </label>
-        <Select options={fieldOptions} inputId="sort-field" className="input" />
+        <Select
+          options={fieldOptions}
+          inputId="sort-field"
+          className="input"
+          onChange={(newValue) => setSortKey(newValue?.value ?? '')}
+        />
       </div>
       <div className="form-group group">
         <label htmlFor="sort-direction" className="label">
@@ -27,6 +38,7 @@ const Controls = () => {
           options={directionOptions}
           inputId="sort-direction"
           className="input"
+          onChange={(newValue) => setSortDirection(newValue?.value ?? '')}
         />
       </div>
     </div>
